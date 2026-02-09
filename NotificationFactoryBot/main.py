@@ -16,12 +16,18 @@ import keyBoardReply as kb
 #SQL inicialization
 from sql import init_db, save_message, get_all_message
 
+
 TOKEN = "" #Token of your BOT
 
 init_db() #Function of initialization, which write in sql.py
 
+
 class Form(StatesGroup):
+    waiting_for_name = State()
+    waiting_for_sector = State()
+    waiting_for_device = State()
     waiting_for_note = State()
+
 
 async def main():
     bot = Bot(token=TOKEN)
@@ -39,55 +45,144 @@ async def main():
     @dp.message(Command("start")) #/start
     async def start(message: Message, state: FSMContext):
         await state.clear()
+        await state.set_state(Form.waiting_for_name)
+        name = message.text
+        await message.answer("Как вас называть?")
+
+    #Save user name
+    @dp.message(StateFilter(Form.waiting_for_name), F.text)
+    async def get_name(message: Message, state: FSMContext):
+        await state.update_data(name=message.text)
+        await state.set_state(Form.waiting_for_sector)
         await message.answer("Выберите сектор:", reply_markup=kb.main)
 
-    @dp.message(StateFilter(None), F.text) #
+    #Sector choose
+    @dp.message(StateFilter(Form.waiting_for_sector), F.text)
     async def sector_chosen(message: Message, state: FSMContext):
-        if message.text.startswith(config.SECTOR_PREFIX):
-            sector = int(message.text.split(" ")[1])
-            await state.update_data(sector=sector)
-            await state.set_state(Form.waiting_for_note)
-            await message.answer(f"Напишите заметку для сектора {sector}")
-        elif message.text.startswith(config.BACK_BUTTON): #Button Back
-            await state.clear()
+        if not message.text.startswith(config.SECTOR_PREFIX):
+            await message.answer("❌ Пожалуйста, выберите сектор кнопкой", reply_markup=kb.main)
+            return
+
+        sector = int(message.text.split(" ")[1])
+        await state.update_data(sector=sector)
+        await state.set_state(Form.waiting_for_device)
+        await message.answer(
+            f"Выберите станок из сектора {sector}:",
+            reply_markup=kb.deviceChoose
+        )
+
+    #Device choose
+    @dp.message(StateFilter(Form.waiting_for_device), F.text)
+    async def device_chosen(message: Message, state: FSMContext):
+        if message.text.startswith(config.BACK_BUTTON1): #Button Back
+            await state.set_state(Form.waiting_for_sector)
             await message.answer("Выберите сектор:", reply_markup=kb.main)
+            return
 
-    #Shield from non text message
-    @dp.message(~F.text)
-    async def not_text(message: Message):
-        await message.answer("❌ Пожалуйста, отправьте текстовое сообщение")
+        if not message.text.startswith(config.DEVICE_PREFIC):
+            await message.answer("❌ Выберите станок кнопкой", reply_markup=kb.deviceChoose)
+            return
 
-    @dp.message(StateFilter(Form.waiting_for_note), F.text) #After you choose the sector it starts work
+        device = int(message.text.split(" ")[1])
+        await state.update_data(device=device)
+        await state.set_state(Form.waiting_for_note)
+        await message.answer(
+            "Напишите заметку:",
+            reply_markup=kb.Back
+        )
+
+    #Save note
+    @dp.message(StateFilter(Form.waiting_for_note), F.text)
     async def save_note(message: Message, state: FSMContext):
-        if(message.text.startswith(config.BACK_BUTTON)):
-            await state.clear()
-            await message.answer("Выберите сектор:", reply_markup=kb.main)
+        if message.text.startswith(config.BACK_BUTTON1):
+            await state.set_state(Form.waiting_for_device)
+            await message.answer("Выберите станок:", reply_markup=kb.deviceChoose)
             return
-        if (message.text.startswith(config.SECTOR_PREFIX)):
-            await message.answer("Сначала допишите заметку.", reply_markup=kb.main)
+
+        if message.text.startswith(config.SECTOR_PREFIX):
+            await message.answer("❌ Сначала допишите заметку", reply_markup=kb.Back)
             return
+
         data = await state.get_data()
         sector = data.get("sector")
+        device = data.get("device")
         note = message.text
-        print(note, sector)
-        save_message(message.from_user.id, sector, note)
-        await state.clear()
-        await message.answer(f"Заметка сохранена: {note}", reply_markup=kb.main)
 
-        #ADMIN NOTIFICATION
-        ADMIN_ID = config.ADMIN_CHAT_ID #Сюда указываем ID чата или тг аккаунта которая можно узнать написав "/id" в чате
-        user = message.from_user
-        user_mention = f"<a href='tg://user?id={user.id}'>{user.first_name}</a>"
-        await bot.send_message(
-            ADMIN_ID,
-            f"🆕 Новая заметка\n"
-            f"Пользователь: {user_mention}\n"
-            f"Сектор: {sector}\n"
-            f"Текст: {note}",
-            parse_mode = "HTML"
+        print(note, sector, device)
+
+        await message.answer(
+            f"Заметка сохранена для участка {sector} и станка {device}:\n{note}",
+        )
+        await state.set_state(Form.waiting_for_sector) #!!!!
+        await message.answer(
+            f"Выберите сектор:\n",
+            reply_markup=kb.main
         )
 
 
+        #ADMIN NOTIFICATION
+        ADMIN_ID = config.ADMIN_CHAT_ID #Сюда указываем ID чата или тг аккаунта
+        user = message.from_user
+        if user.username:
+            user_text = f"@{user.username}"
+        else:
+            user_text = user.first_name
+        data = await state.get_data()
+        name = data.get("name")
+        await bot.send_message(
+            ADMIN_ID,
+            f"🆕 Новая заметка\n"
+            f"Пользователь: {user_text}\n"
+            f"Имя: {name}\n"
+            f"Сектор: {sector}\n"
+            f"Станок: {device}\n"
+            f"Текст: {note}",
+            parse_mode="HTML"
+        )
+
+        #Save photo
+
+    @dp.message(StateFilter(Form.waiting_for_note), F.photo)
+    async def save_note_photo(message: Message, state: FSMContext):
+        data = await state.get_data()
+        sector = data.get("sector")
+        device = data.get("device")
+
+        photo_id = message.photo[-1].file_id
+        note = message.caption if message.caption else "(без текста)"
+
+        print(note, sector, device, photo_id)
+        # save_message(message.from_user.id, sector, device, note)
+
+        await message.answer(
+            f"Заметка с фото сохранена для участка {sector} и станка {device}",
+        )
+        await state.set_state(Form.waiting_for_sector)
+        await message.answer("Выберите сектор:", reply_markup=kb.main)
+
+        # ADMIN
+        ADMIN_ID = config.ADMIN_CHAT_ID
+        user = message.from_user
+        user_text = f"@{user.username}" if user.username else user.first_name
+        name = data.get("name")
+
+        await bot.send_photo(
+            ADMIN_ID,
+            photo=photo_id,
+            caption=
+            f"🆕 Новая заметка\n"
+            f"Пользователь: {user_text}\n"
+            f"Имя: {name}\n"
+            f"Сектор: {sector}\n"
+            f"Станок: {device}\n"
+            f"Текст: {note}",
+        )
+
+    # Shield from non text message
+    @dp.message(~F.text & ~F.photo)
+    async def not_supported(message: Message):
+        await message.answer("❌ Поддерживаются только текст и фото")
     await dp.start_polling(bot)
+
 
 asyncio.run(main())
