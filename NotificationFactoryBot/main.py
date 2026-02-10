@@ -103,6 +103,10 @@ async def main():
             await message.answer("❌ Сначала допишите заметку", reply_markup=kb.Back)
             return
 
+        if len(message.text.strip()) < 5:
+            await message.answer("Введите текст жалобы", reply_markup=kb.Back)
+            return
+
         data = await state.get_data()
         sector = data.get("sector")
         device = data.get("device")
