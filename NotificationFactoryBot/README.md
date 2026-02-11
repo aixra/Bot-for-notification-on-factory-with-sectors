@@ -45,4 +45,53 @@ ID админа следует вписывать в него же.
 Откройте нужную Google Таблицу.
 Нажмите кнопку "Share" (Настройки доступа).
 В скачанном JSON-файле найдите поле client_email (выглядит как sheets-bot@project-id.iam.gserviceaccount.com).
+
 Вставьте этот email в поле общего доступа к таблице, выбрав роль "Editor" (Редактор), и нажмите "Отправить".
+
+-----------------------------------------------------------ENGLISH-------------------------------------------------------------------------
+1) The code is written using the following libraries:
+pip install -U aiogram
+pip install -U google-api-python-client
+pip install -U google-auth
+pip install -U openpyxl
+
+2) Using the venv virtual environment is recommended to avoid library conflicts.
+
+3) The bot can be created via @BotFather in Telegram (the bot token can be obtained there,
+and inserted into the TOKEN line in the main.py file).
+
+The code is written in Python 3.12.3 (Python 3.9+ is suitable for aiogram).
+
+Display settings:
+All control is handled through config.py.
+The config.py file contains all the parameters used in the names. By changing the contents of its variables, you can change the names of buttons in the bot, etc.
+The admin ID should also be entered in it.
+
+-----------------------------------HOW TO USE GOOGLE SHEETS---------------------------------------------------------------------------
+---------------------------------Step 1: Create a project in Google Cloud--------------------------------------------------------------------
+Go to https://console.cloud.google.com/apis/dashboard.
+Click "Select a project" -> "New Project".
+Enter a project name and click "Create".
+
+---------------------------------Step 2: Enable the Google Sheets API------------------------------------------------------------------------
+In the left menu, select "APIs & Services" -> "Dashboard".
+Click "+ ENABLE APIS AND SERVICES".
+In the search bar, type "Google Sheets API", select it, and click "Enable".
+It is also recommended to enable the Google Drive API (for working with files).
+
+---------------------------------Step 3: Create a service account and key (JSON)-------------------------------------------------------
+Go to "APIs & Services" -> "Credentials".
+Click "+ CREATE CREDENTIALS" and select "Service account".
+Enter a name for the service account (e.g., sheets-bot), click "Create and Continue".
+Click "Done" (assigning roles is optional).
+In the "Service Accounts" list, click the newly created account.
+Go to the "KEYS" tab.
+Click "ADD KEY" -> "Create new key".
+Select the JSON type and click "Create".
+
+---------------------------------Step 4: Grant access to the spreadsheet-------------------------------------------------------------------
+A service account is like a new Google user. To allow them to read and write to your spreadsheet, you need to grant them permissions.
+Open the desired Google Sheet.
+Click the "Share" button.
+In the downloaded JSON file, find the client_email field (looks like sheets-bot@project-id.iam.gserviceaccount.com).
+Paste this email into the spreadsheet sharing field, selecting the "Editor" role, and click "Submit."
