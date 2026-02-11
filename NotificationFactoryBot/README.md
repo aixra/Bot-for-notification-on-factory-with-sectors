@@ -1,39 +1,48 @@
-1) Код написан с использованием библиотеки aiogram
+1) Код написан с использованием библиотек
 pip install -U aiogram
+pip install -U google-api-python-client
+pip install -U google-auth
+pip install -U openpyxl
 
 2)Рекомендуеться использование виртуальной среды venv, во избежания конфликтов библиотек.
 
 3)Бот может быть создан через @BotFather в тг (токен бота можно получить в нем же, 
 и вставить в строку TOKEN в файле main.py)
 
-
-
 Код написан на python 3.12.3 (для работы aiogram подходит версия python 3.9+)
 
 Настройка отображения:
+Все управление происходит через config.py
 Файл config.py содержит все параметры используемые в названиях, через изменгения содержимого
 его переменных, можно менять название кнопок в боте и т.п. 
 ID админа следует вписывать в него же.
 
 
-Для того чтобы узнать id для админки, нужно написать в чат с ботом "/id"
+-----------------------------------КАК ИСПОЛЬЗОВАТЬ ГУГЛ ТАБЛИЦЫ---------------------------------------------------------------------------
+---------------------------------Шаг 1: Создание проекта в Google Cloud--------------------------------------------------------------------
+Перейдите в https://console.cloud.google.com/apis/dashboard.
+Нажмите "Select a project" (Выбрать проект) -> "New Project" (Новый проект).
+Введите название проекта и нажмите "Create"
 
+---------------------------------Шаг 2: Включение Google Sheets API------------------------------------------------------------------------
+В меню слева выберите "APIs & Services" -> "Dashboard" (Панель управления).
+Нажмите "+ ENABLE APIS AND SERVICES" (Включить API и сервисы).
+В строке поиска введите "Google Sheets API", выберите его и нажмите "Enable" (Включить).
+Рекомендуется также включить "Google Drive API" (для работы с файлами)
 
-------------------------------------------------------------------------------------------------
+---------------------------------Шаг 3: Создание сервисного аккаунта и ключа (JSON)-------------------------------------------------------
+Перейдите в раздел "APIs & Services" -> "Credentials" (Учетные данные).
+Нажмите "+ CREATE CREDENTIALS" (Создать учетные данные) и выберите "Service account".
+Введите имя сервисного аккаунта (например, sheets-bot), нажмите "Create and Continue".
+Нажмите "Done" (Роли назначать не обязательно).
+В списке "Service Accounts" нажмите на только что созданный аккаунт.
+Перейдите во вкладку "KEYS" (Ключи).
+Нажмите "ADD KEY" -> "Create new key".
+Выберите тип JSON и нажмите "Create".
 
-1) The code is written using the aiogram library
-pip install -U aiogram
-
-2) Using the venv virtual environment is recommended to avoid library conflicts.
-
-3) The bot can be created via @BotFather in Telegram (the bot token can be obtained there,
-and inserted into the TOKEN line in the main.py file).
-
-The code is written in Python 3.12.3 (Python 3.9+ is suitable for aiogram).
-
-Display settings:
-The config.py file contains all the parameters used in the names. By changing the contents
-of its variables, you can change the names of buttons in the bot, etc.
-The admin ID should also be entered in this file.
-
-To find out the ID for the admin panel, type "/id" in the bot chat.
+---------------------------------Шаг 4: Предоставление доступа к таблице-------------------------------------------------------------------
+Сервисный аккаунт — это как новый пользователь Google. Чтобы он мог читать/писать в вашу таблицу, нужно дать ему права.
+Откройте нужную Google Таблицу.
+Нажмите кнопку "Share" (Настройки доступа).
+В скачанном JSON-файле найдите поле client_email (выглядит как sheets-bot@project-id.iam.gserviceaccount.com).
+Вставьте этот email в поле общего доступа к таблице, выбрав роль "Editor" (Редактор), и нажмите "Отправить".

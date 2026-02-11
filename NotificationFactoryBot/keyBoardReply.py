@@ -1,30 +1,33 @@
-from aiogram.types import ReplyKeyboardMarkup, KeyboardButton
-from aiogram.types import CallbackQuery
+from aiogram.types import KeyboardButton, ReplyKeyboardMarkup
 
 import config
 
-main = ReplyKeyboardMarkup(
-    keyboard=[
-        [KeyboardButton(text=config.SECTOR1), KeyboardButton(text=config.SECTOR2)],
-        [KeyboardButton(text=config.SECTOR3), KeyboardButton(text=config.SECTOR4)],
-        #[KeyboardButton(text=config.BACK_BUTTON1)],
-    ],
-    resize_keyboard=True,      # компактные кнопки
-    one_time_keyboard=True
-)
-deviceChoose = ReplyKeyboardMarkup(
-    keyboard=[
-        [KeyboardButton(text="Device 1"), KeyboardButton(text="Device 2")],
-        [KeyboardButton(text="Device 3"), KeyboardButton(text="Device 4")],
-        [KeyboardButton(text=config.BACK_BUTTON2)],
-    ],
-    resize_keyboard=True,      # компактные кнопки
-    one_time_keyboard=True
-)
+
+def _chunk(items: list[str], size: int = 2) -> list[list[KeyboardButton]]:
+    rows: list[list[KeyboardButton]] = []
+    for i in range(0, len(items), size):
+        rows.append([KeyboardButton(text=item) for item in items[i : i + size]])
+    return rows
+
+
+def build_sectors_keyboard(sectors: list[str]) -> ReplyKeyboardMarkup:
+    return ReplyKeyboardMarkup(
+        keyboard=_chunk(sectors),
+        resize_keyboard=True,
+        one_time_keyboard=True,
+    )
+
+
+def build_devices_keyboard(devices: list[str]) -> ReplyKeyboardMarkup:
+    return ReplyKeyboardMarkup(
+        keyboard=_chunk(devices) + [[KeyboardButton(text=config.BACK_BUTTON2)]],
+        resize_keyboard=True,
+        one_time_keyboard=True,
+    )
+
+
 Back = ReplyKeyboardMarkup(
-    keyboard=[
-        [KeyboardButton(text=config.BACK_BUTTON1)],
-    ],
-    resize_keyboard=True,      # компактные кнопки
-    one_time_keyboard=True
+    keyboard=[[KeyboardButton(text=config.BACK_BUTTON1)]],
+    resize_keyboard=True,
+    one_time_keyboard=True,
 )
