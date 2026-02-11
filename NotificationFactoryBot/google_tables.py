@@ -10,11 +10,6 @@ from googleapiclient.discovery import build
 SCOPES = ["https://www.googleapis.com/auth/spreadsheets"]
 
 
-def build_request_id(user_id: int, request_time: datetime) -> str:
-    """Generate a stable request id using user id and first message timestamp."""
-    return f"REQ-{request_time.strftime('%Y%m%d%H%M%S')}-{user_id}"
-
-
 class GoogleTablesClient:
     def __init__(self, spreadsheet_id: str, credentials_path: str, sheet_name: str = "Sheet1"):
         self.spreadsheet_id = spreadsheet_id
@@ -30,11 +25,11 @@ class GoogleTablesClient:
 
     def append_complaint(
         self,
-        request_id: str,
+        request_id: int,
         request_time: datetime,
         user_name: str,
-        sector: int,
-        device: int,
+        sector: str,
+        device: str,
         complaint_text: str,
     ) -> None:
         service = self._service()
@@ -60,14 +55,13 @@ def append_complaint_to_google_tables(
     spreadsheet_id: Optional[str],
     credentials_path: Optional[str],
     sheet_name: str,
-    request_id: str,
+    request_id: int,
     request_time: datetime,
     user_name: str,
-    sector: int,
-    device: int,
+    sector: str,
+    device: str,
     complaint_text: str,
 ) -> None:
-    """Append complaint to Google Sheets (Google Tables API style storage)."""
     if not spreadsheet_id or not credentials_path:
         return
 

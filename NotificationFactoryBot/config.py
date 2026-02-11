@@ -5,21 +5,33 @@ BACK_BUTTON2 = "Назад к сектору"
 
 ADMIN_CHAT_ID = -5228109324
 
+# Fallback sections/devices if Excel file is unavailable
+DEFAULT_SECTORS = ["Участок 1", "Участок 2", "Участок 3", "Участок 4"]
+DEFAULT_DEVICES = {
+    "Участок 1": ["Device 1", "Device 2", "Device 3", "Device 4"],
+    "Участок 2": ["Device 1", "Device 2", "Device 3", "Device 4"],
+    "Участок 3": ["Device 1", "Device 2", "Device 3", "Device 4"],
+    "Участок 4": ["Device 1", "Device 2", "Device 3", "Device 4"],
+}
 
-SECTOR1 = "Участок 1"
-SECTOR2 = "Участок 2"
-SECTOR3 = "Участок 3"
-SECTOR4 = "Участок 4"
-
-Device1 = "Device 1"
-Device2 = "Device 2"
-Device3 = "Device 3"
-device4 = "Device 4"
-
-ACTION_ADD_NOTE = "Добавить обращение"
-ACTION_BACK_TO_SECTORS = "Вернуться к выбору сектора"
+# External Excel source with sectors/devices
+EQUIPMENT_EXCEL_FILE = "equipment_catalog.xlsx"
+EQUIPMENT_SHEET_NAME = "Catalog"
 
 # Google Tables (Google Sheets API) settings
 GOOGLE_TABLES_SPREADSHEET_ID = ""
 GOOGLE_TABLES_CREDENTIALS_FILE = "service_account.json"
 GOOGLE_TABLES_SHEET_NAME = "Sheet1"
+
+# Incremental request id storage
+REQUEST_ID_COUNTER_FILE = "request_id_counter.txt"
+
+# SMTP / e-mail notification settings
+EMAIL_ENABLED = False
+SMTP_HOST = ""
+SMTP_PORT = 587
+SMTP_USERNAME = ""
+SMTP_PASSWORD = ""
+SMTP_FROM = ""
+EMAIL_TO = ""
+SMTP_USE_TLS = True
