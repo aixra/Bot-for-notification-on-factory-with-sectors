@@ -44,7 +44,7 @@ ID админа следует вписывать в него же.
 Сервисный аккаунт — это как новый пользователь Google. Чтобы он мог читать/писать в вашу таблицу, нужно дать ему права.
 Откройте нужную Google Таблицу.
 Нажмите кнопку "Share" (Настройки доступа).
-В скачанном JSON-файле найдите поле client_email (выглядит как sheets-bot@project-id.iam.gserviceaccount.com).
+В скачанном JSON-файле найдите поле client_email (выглядит как "sheets-bot@project-id.iam.gserviceaccount.com").
 
 Вставьте этот email в поле общего доступа к таблице, выбрав роль "Editor" (Редактор), и нажмите "Отправить".
 
@@ -93,5 +93,6 @@ Select the JSON type and click "Create".
 A service account is like a new Google user. To allow them to read and write to your spreadsheet, you need to grant them permissions.
 Open the desired Google Sheet.
 Click the "Share" button.
-In the downloaded JSON file, find the client_email field (looks like sheets-bot@project-id.iam.gserviceaccount.com).
+In the downloaded JSON file, find the client_email field (looks like "sheets-bot@project-id.iam.gserviceaccount.com").
 Paste this email into the spreadsheet sharing field, selecting the "Editor" role, and click "Submit."
+
