@@ -1,4 +1,5 @@
 import asyncio
+from datetime import datetime
 from aiogram import Bot, Dispatcher
 from aiogram.filters import Command
 from aiogram.filters.state import StateFilter
@@ -15,6 +16,7 @@ import keyBoardReply as kb
 
 #SQL inicialization
 from sql import init_db, save_message, get_all_message
+from google_tables import append_complaint_to_google_tables, build_request_id
 
 
 TOKEN = "" #Token of your BOT
@@ -62,6 +64,10 @@ async def main():
         if not message.text.startswith(config.SECTOR_PREFIX):
             await message.answer("❌ Пожалуйста, выберите сектор кнопкой", reply_markup=kb.main)
             return
+
+        data = await state.get_data()
+        if not data.get("request_started_at"):
+            await state.update_data(request_started_at=message.date.isoformat())
 
         sector = int(message.text.split(" ")[1])
         await state.update_data(sector=sector)
@@ -111,6 +117,8 @@ async def main():
         sector = data.get("sector")
         device = data.get("device")
         note = message.text
+        request_started_at = data.get("request_started_at")
+        request_time = datetime.fromisoformat(request_started_at) if request_started_at else message.date
 
         print(note, sector, device)
 
@@ -144,6 +152,19 @@ async def main():
             parse_mode="HTML"
         )
 
+        append_complaint_to_google_tables(
+            spreadsheet_id=config.GOOGLE_TABLES_SPREADSHEET_ID,
+            credentials_path=config.GOOGLE_TABLES_CREDENTIALS_FILE,
+            sheet_name=config.GOOGLE_TABLES_SHEET_NAME,
+            request_id=build_request_id(message.from_user.id, request_time),
+            request_time=request_time,
+            user_name=name or user_text,
+            sector=sector,
+            device=device,
+            complaint_text=note,
+        )
+        await state.update_data(request_started_at=None)
+
         #Save photo
 
     @dp.message(StateFilter(Form.waiting_for_note), F.photo)
@@ -151,6 +172,8 @@ async def main():
         data = await state.get_data()
         sector = data.get("sector")
         device = data.get("device")
+        request_started_at = data.get("request_started_at")
+        request_time = datetime.fromisoformat(request_started_at) if request_started_at else message.date
 
         photo_id = message.photo[-1].file_id
         note = message.caption if message.caption else "(без текста)"
@@ -181,6 +204,19 @@ async def main():
             f"Станок: {device}\n"
             f"Текст: {note}",
         )
+
+        append_complaint_to_google_tables(
+            spreadsheet_id=config.GOOGLE_TABLES_SPREADSHEET_ID,
+            credentials_path=config.GOOGLE_TABLES_CREDENTIALS_FILE,
+            sheet_name=config.GOOGLE_TABLES_SHEET_NAME,
+            request_id=build_request_id(message.from_user.id, request_time),
+            request_time=request_time,
+            user_name=name or user_text,
+            sector=sector,
+            device=device,
+            complaint_text=note,
+        )
+        await state.update_data(request_started_at=None)
 
     # Shield from non text message
     @dp.message(~F.text & ~F.photo)

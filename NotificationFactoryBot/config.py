@@ -18,3 +18,8 @@ device4 = "Device 4"
 
 ACTION_ADD_NOTE = "Добавить обращение"
 ACTION_BACK_TO_SECTORS = "Вернуться к выбору сектора"
+
+# Google Tables (Google Sheets API) settings
+GOOGLE_TABLES_SPREADSHEET_ID = ""
+GOOGLE_TABLES_CREDENTIALS_FILE = "service_account.json"
+GOOGLE_TABLES_SHEET_NAME = "Sheet1"
