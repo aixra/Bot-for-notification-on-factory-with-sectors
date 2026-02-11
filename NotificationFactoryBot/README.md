@@ -1,3 +1,4 @@
+Инструкция по применению
 1) Код написан с использованием библиотек
 pip install -U aiogram
 pip install -U google-api-python-client
@@ -48,7 +49,7 @@ ID админа следует вписывать в него же.
 
 Вставьте этот email в поле общего доступа к таблице, выбрав роль "Editor" (Редактор), и нажмите "Отправить".
 
------------------------------------------------------------ENGLISH-------------------------------------------------------------------------
+-----------------------------------------------------------ENGLISH DATASHEET--------------------------------------------------------------------
 1) The code is written using the following libraries:
 pip install -U aiogram
 pip install -U google-api-python-client
@@ -95,4 +96,5 @@ Open the desired Google Sheet.
 Click the "Share" button.
 In the downloaded JSON file, find the client_email field (looks like "sheets-bot@project-id.iam.gserviceaccount.com").
 Paste this email into the spreadsheet sharing field, selecting the "Editor" role, and click "Submit."
+
 
