@@ -1,39 +1,29 @@
-1) Код написан с использованием библиотеки aiogram
-pip install -U aiogram
+----------------------------------------------------------Инструкция на русском-----------------------------------------------------------------------------
 
-2)Рекомендуеться использование виртуальной среды venv, во избежания конфликтов библиотек.
+1) Даннный бот создан для уведомления администрации о действиях происходящих на разных секторах завода и с разным оборудованием.
 
-3)Бот может быть создан через @BotFather в тг (токен бота можно получить в нем же, 
-и вставить в строку TOKEN в файле main.py)
+2) Бот может:
+    -Передавать данные в google sheets
+    -Отправлять данные на почту
+    -Отправлять данные в чат ТГ или Администратору
+    -Принимать жалобы.
+    -Принимать на каждую жалобу по 2 фотографии.
 
+3) Удобство использования:
+    -Список секторов завода и оборудование выведен в один exel файл, что делает бота удобным для редактирования, без знания языка программирования Python
+    -Остальные настройки происходят через отдельный файл config.py в котором также выведены комментарии для удобства использования.
+   
+-------------------------------------------------------------ENGLISH DATASHEET-------------------------------------------------------------------------------
 
+1) This bot was created to notify the administration about activities occurring in different plant sectors and with different equipment.
 
-Код написан на python 3.12.3 (для работы aiogram подходит версия python 3.9+)
+2) The bot can:
+-Transfer data to Google Sheets
+-Send data by email
+-Send data to Telegram chat or to the Administrator
+-Receive complaints.
+-Accept two photos for each complaint.
 
-Настройка отображения:
-Файл config.py содержит все параметры используемые в названиях, через изменгения содержимого
-его переменных, можно менять название кнопок в боте и т.п. 
-ID админа следует вписывать в него же.
-
-
-Для того чтобы узнать id для админки, нужно написать в чат с ботом "/id"
-
-
-------------------------------------------------------------------------------------------------
-
-1) The code is written using the aiogram library
-pip install -U aiogram
-
-2) Using the venv virtual environment is recommended to avoid library conflicts.
-
-3) The bot can be created via @BotFather in Telegram (the bot token can be obtained there,
-and inserted into the TOKEN line in the main.py file).
-
-The code is written in Python 3.12.3 (Python 3.9+ is suitable for aiogram).
-
-Display settings:
-The config.py file contains all the parameters used in the names. By changing the contents
-of its variables, you can change the names of buttons in the bot, etc.
-The admin ID should also be entered in this file.
-
-To find out the ID for the admin panel, type "/id" in the bot chat.
+3) Ease of use:
+-The list of plant sectors and equipment is stored in a single Excel file, making the bot easy to edit without knowledge of the Python programming language.
+-Other settings are configured through a separate config.py file, which also contains comments for ease of use.
